@@ -9,7 +9,6 @@ This is a Streamlit-based AI application that generates content for multiple pla
 * Generate platform-specific content instantly
 * Supports Instagram, LinkedIn, Twitter & Blog
 * Tone selection (Professional, Casual, Motivational, Funny)
-* Copy content with one click
 * Download all generated content
 * Dark mode support
 * History tracking
