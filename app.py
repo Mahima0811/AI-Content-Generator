@@ -126,24 +126,15 @@ elif generate and topic and audience:
 
 # 📋 COPY BUTTON FUNCTION (FIXED)
 
-import json
-
-def copy_box(label, text, key):
-    st.markdown(f"### {label}")
-
-    st.text_area("", text, height=200, key=f"{key}_text")
-
-    safe_text = json.dumps(text)
-
-    copy_script = f"""
-    <button onclick='navigator.clipboard.writeText({safe_text})' 
-    style="background-color:#ff4b4b;color:white;padding:6px 12px;
-    border:none;border-radius:6px;cursor:pointer;">
-    📋 Copy
-    </button>
-    """
-
-    st.markdown(copy_script, unsafe_allow_html=True)
+def copy_box(label, text, key, height=200):
+    st.markdown(f"## {label}")
+    
+    st.text_area(
+        label=f"{label} Content",
+        value=text,
+        height=height,
+        key=key
+    )
 
 # 📊 DISPLAY
 outputs = st.session_state.get("outputs", {})
@@ -166,22 +157,18 @@ if outputs:
     col1, col2 = st.columns(2)
 
     with col1:
-        copy_box("📱 Instagram", outputs.get("Instagram", ""), "copy_insta")
-        st.text_area("Instagram Content", outputs.get("Instagram", ""), height=200)
+         copy_box("📱 Instagram", outputs.get("Instagram", ""), "copy_insta", 200)
 
-        st.markdown("---")
+         st.markdown("---")
 
-        copy_box("📝 Blog", outputs.get("Blog", ""), "copy_blog")
-        st.text_area("Blog Content", outputs.get("Blog", ""), height=500)
+         copy_box("📝 Blog", outputs.get("Blog", ""), "copy_blog", 500)
 
     with col2:
-        copy_box("💼 LinkedIn", outputs.get("LinkedIn", ""), "copy_linkedin")
-        st.text_area("LinkedIn Content", outputs.get("LinkedIn", ""), height=500)
+         copy_box("💼 LinkedIn", outputs.get("LinkedIn", ""), "copy_linkedin", 500)
 
-        st.markdown("---")
+         st.markdown("---")
 
-        copy_box("🐦 Twitter", outputs.get("Twitter", ""), "copy_twitter")
-        st.text_area("Twitter Content", outputs.get("Twitter", ""), height=200)
+         copy_box("🐦 Twitter", outputs.get("Twitter", ""), "copy_twitter", 200)
 
 # 📜 HISTORY SECTION (WITH TOGGLE)
 show_history = st.toggle("📜 Show History")
