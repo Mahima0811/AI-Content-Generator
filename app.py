@@ -126,18 +126,24 @@ elif generate and topic and audience:
 
 # 📋 COPY BUTTON FUNCTION (FIXED)
 
-import pyperclip
+import json
 
 def copy_box(label, text, key):
-    col1, col2 = st.columns([6,1])
+    st.markdown(f"### {label}")
 
-    with col1:
-        st.markdown(f"## {label}")
+    st.text_area("", text, height=200, key=f"{key}_text")
 
-    with col2:
-        if st.button("📋", key=key):
-            pyperclip.copy(text)
-            st.toast("✅ Copied to clipboard!")
+    safe_text = json.dumps(text)
+
+    copy_script = f"""
+    <button onclick='navigator.clipboard.writeText({safe_text})' 
+    style="background-color:#ff4b4b;color:white;padding:6px 12px;
+    border:none;border-radius:6px;cursor:pointer;">
+    📋 Copy
+    </button>
+    """
+
+    st.markdown(copy_script, unsafe_allow_html=True)
 
 # 📊 DISPLAY
 outputs = st.session_state.get("outputs", {})
