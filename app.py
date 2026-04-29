@@ -161,7 +161,7 @@ outputs = st.session_state.get("outputs", {})
 
 if outputs:
 
-    # 📥 Download button
+    # 1️⃣ DOWNLOAD BUTTON (TOP)
     all_content = ""
     for k, v in outputs.items():
         all_content += f"{k}:\n{v}\n\n"
@@ -173,6 +173,27 @@ if outputs:
     )
 
     st.divider()
+
+    # 2️⃣ TABS (CONTENT)
+    tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
+
+    with tab1:
+        st.text_area("Instagram Content", outputs.get("Instagram", ""), height=200)
+
+    with tab2:
+        st.text_area("LinkedIn Content", outputs.get("LinkedIn", ""), height=400)
+
+    with tab3:
+        st.text_area("Twitter Content", outputs.get("Twitter", ""), height=200)
+
+    with tab4:
+        st.text_area("Blog Content", outputs.get("Blog", ""), height=500)
+
+    st.divider()
+
+    # 3️⃣ EVALUATION (AFTER CONTENT)
+    st.markdown("## 📊 Content Evaluation")
+    st.info(evaluate_content(outputs.get("Instagram", ""), "Instagram"))
 
     # 🔥 Tabs UI
 tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
