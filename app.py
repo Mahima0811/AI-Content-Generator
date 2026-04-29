@@ -157,11 +157,55 @@ def evaluate_content(text, platform):
     return response.choices[0].message.content
 
 # 📊 DISPLAY
+# 📊 DISPLAY
 outputs = st.session_state.get("outputs", {})
+
+# ----------- FUNCTIONS (KEEP ONLY ONCE, OUTSIDE UI) -----------
+
+def evaluate_content(text, platform):
+    prompt = f"""
+    Evaluate the following {platform} content.
+
+    Give:
+    1. Engagement score out of 10
+    2. Readability (Short/Medium/Long)
+    3. 2 improvement suggestions
+
+    Content:
+    {text}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return response.choices[0].message.content
+
+
+def improve_content(text, platform):
+    prompt = f"""
+    Improve the following {platform} content.
+    Make it more engaging, clearer, and impactful.
+    Keep platform-specific style in mind.
+
+    Content:
+    {text}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return response.choices[0].message.content
+
+
+# ----------- MAIN UI -----------
 
 if outputs:
 
-    # 1️⃣ DOWNLOAD BUTTON (TOP)
+    # 📥 DOWNLOAD BUTTON
     all_content = ""
     for k, v in outputs.items():
         all_content += f"{k}:\n{v}\n\n"
@@ -174,114 +218,62 @@ if outputs:
 
     st.divider()
 
-    # 2️⃣ TABS (CONTENT)
-    tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
+    # 📱 TABS (ONLY ONE TIME)
+    tab1, tab2, tab3, tab4 = st.tabs(
+        ["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"]
+    )
 
+    # -------- INSTAGRAM --------
     with tab1:
-        st.text_area("Instagram Content", outputs.get("Instagram", ""), height=200)
+        content = outputs.get("Instagram", "")
 
+        st.text_area("Instagram Content", content, height=200)
+
+        st.markdown("### 📊 Evaluation")
+        st.info(evaluate_content(content, "Instagram"))
+
+        if st.button("✨ Improve Instagram"):
+            improved = improve_content(content, "Instagram")
+            st.text_area("Improved Instagram", improved, height=200)
+
+    # -------- LINKEDIN --------
     with tab2:
-        st.text_area("LinkedIn Content", outputs.get("LinkedIn", ""), height=400)
+        content = outputs.get("LinkedIn", "")
 
+        st.text_area("LinkedIn Content", content, height=400)
+
+        st.markdown("### 📊 Evaluation")
+        st.info(evaluate_content(content, "LinkedIn"))
+
+        if st.button("✨ Improve LinkedIn"):
+            improved = improve_content(content, "LinkedIn")
+            st.text_area("Improved LinkedIn", improved, height=400)
+
+    # -------- TWITTER --------
     with tab3:
-        st.text_area("Twitter Content", outputs.get("Twitter", ""), height=200)
+        content = outputs.get("Twitter", "")
 
+        st.text_area("Twitter Content", content, height=200)
+
+        st.markdown("### 📊 Evaluation")
+        st.info(evaluate_content(content, "Twitter"))
+
+        if st.button("✨ Improve Twitter"):
+            improved = improve_content(content, "Twitter")
+            st.text_area("Improved Twitter", improved, height=200)
+
+    # -------- BLOG --------
     with tab4:
-        st.text_area("Blog Content", outputs.get("Blog", ""), height=500)
+        content = outputs.get("Blog", "")
 
-    st.divider()
+        st.text_area("Blog Content", content, height=500)
 
-    # 3️⃣ EVALUATION (AFTER CONTENT)
-    st.markdown("## 📊 Content Evaluation")
-    st.info(evaluate_content(outputs.get("Instagram", ""), "Instagram"))
+        st.markdown("### 📊 Evaluation")
+        st.info(evaluate_content(content, "Blog"))
 
-    # 🔥 Tabs UI
-tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
-
-# ---------- INSTAGRAM ----------
-with tab1:
-    content = outputs.get("Instagram", "")
-    st.text_area("Instagram Content", content, height=200, key="insta_tab")
-
-    st.markdown("### 📊 Evaluation")
-    st.info(evaluate_content(content, "Instagram"))
-
-    if st.button("✨ Improve Instagram", key="improve_insta"):
-        improved = improve_content(content, "Instagram")
-        st.text_area("Improved Instagram", improved, height=200)
-
-# ---------- LINKEDIN ----------
-with tab2:
-    content = outputs.get("LinkedIn", "")
-    st.text_area("LinkedIn Content", content, height=400, key="linkedin_tab")
-
-    st.markdown("### 📊 Evaluation")
-    st.info(evaluate_content(content, "LinkedIn"))
-
-    if st.button("✨ Improve LinkedIn", key="improve_linkedin"):
-        improved = improve_content(content, "LinkedIn")
-        st.text_area("Improved LinkedIn", improved, height=400)
-
-# ---------- TWITTER ----------
-with tab3:
-    content = outputs.get("Twitter", "")
-    st.text_area("Twitter Content", content, height=200, key="twitter_tab")
-
-    st.markdown("### 📊 Evaluation")
-    st.info(evaluate_content(content, "Twitter"))
-
-    if st.button("✨ Improve Twitter", key="improve_twitter"):
-        improved = improve_content(content, "Twitter")
-        st.text_area("Improved Twitter", improved, height=200)
-
-# ---------- BLOG ----------
-with tab4:
-    content = outputs.get("Blog", "")
-    st.text_area("Blog Content", content, height=500, key="blog_tab")
-
-    st.markdown("### 📊 Evaluation")
-    st.info(evaluate_content(content, "Blog"))
-
-    if st.button("✨ Improve Blog", key="improve_blog"):
-        improved = improve_content(content, "Blog")
-        st.text_area("Improved Blog", improved, height=500)
-
-      # 📊 Evaluation
-    def evaluate_content(text, platform):
-        prompt = f"""
-        Evaluate the following {platform} content.
-
-        Give:
-        1. Engagement score out of 10
-        2. Readability (Short/Medium/Long)
-        3. 2 improvement suggestions
-
-        Content:
-        {text}
-        """
-
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
-        )
-
-        return response.choices[0].message.content
-    
-    def improve_content(text, platform):
-        prompt = f"""
-        Improve the following {platform} content based on best practices.
-        Make it more engaging, clear, and impactful.
-
-        Content:
-        {text}
-        """
-
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
-        )
-
-        return response.choices[0].message.content
+        if st.button("✨ Improve Blog"):
+            improved = improve_content(content, "Blog")
+            st.text_area("Improved Blog", improved, height=500)
 
 # 📜 HISTORY SECTION (WITH TOGGLE)
 show_history = st.toggle("📜 Show History")
