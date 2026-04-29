@@ -136,10 +136,35 @@ def copy_box(label, text, key, height=200):
         key=key
     )
 
+def evaluate_content(text, platform):
+    prompt = f"""
+    Evaluate the following {platform} content.
+
+    Give:
+    1. Engagement score out of 10
+    2. Readability (Short/Medium/Long)
+    3. 2 improvement suggestions
+
+    Content:
+    {text}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return response.choices[0].message.content
+
 # 📊 DISPLAY
 outputs = st.session_state.get("outputs", {})
 
 if outputs:
+    st.markdown("## 📊 Content Evaluation")
+
+    evaluation = evaluate_content(outputs.get("Instagram", ""), "Instagram")
+
+    st.info(evaluation)
 
     # 📥 Download button (TOP)
     all_content = ""
@@ -154,21 +179,19 @@ if outputs:
 
     st.divider()
 
-    col1, col2 = st.columns(2)
+tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
 
-    with col1:
-         copy_box("📱 Instagram", outputs.get("Instagram", ""), "copy_insta", 200)
+with tab1:
+    st.text_area("Instagram Content", outputs.get("Instagram", ""), height=200, key="insta_tab")
 
-         st.markdown("---")
+with tab2:
+    st.text_area("LinkedIn Content", outputs.get("LinkedIn", ""), height=400, key="linkedin_tab")
 
-         copy_box("📝 Blog", outputs.get("Blog", ""), "copy_blog", 500)
+with tab3:
+    st.text_area("Twitter Content", outputs.get("Twitter", ""), height=200, key="twitter_tab")
 
-    with col2:
-         copy_box("💼 LinkedIn", outputs.get("LinkedIn", ""), "copy_linkedin", 500)
-
-         st.markdown("---")
-
-         copy_box("🐦 Twitter", outputs.get("Twitter", ""), "copy_twitter", 200)
+with tab4:
+    st.text_area("Blog Content", outputs.get("Blog", ""), height=500, key="blog_tab")
 
 # 📜 HISTORY SECTION (WITH TOGGLE)
 show_history = st.toggle("📜 Show History")
