@@ -160,13 +160,8 @@ def evaluate_content(text, platform):
 outputs = st.session_state.get("outputs", {})
 
 if outputs:
-    st.markdown("## 📊 Content Evaluation")
 
-    evaluation = evaluate_content(outputs.get("Instagram", ""), "Instagram")
-
-    st.info(evaluation)
-
-    # 📥 Download button (TOP)
+    # 📥 Download button
     all_content = ""
     for k, v in outputs.items():
         all_content += f"{k}:\n{v}\n\n"
@@ -179,19 +174,27 @@ if outputs:
 
     st.divider()
 
-tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
+    # 🔥 Tabs UI
+    tab1, tab2, tab3, tab4 = st.tabs(["📱 Instagram", "💼 LinkedIn", "🐦 Twitter", "📝 Blog"])
 
-with tab1:
-    st.text_area("Instagram Content", outputs.get("Instagram", ""), height=200, key="insta_tab")
+    with tab1:
+        st.text_area("Instagram Content", outputs.get("Instagram", ""), height=200, key="insta_tab")
 
-with tab2:
-    st.text_area("LinkedIn Content", outputs.get("LinkedIn", ""), height=400, key="linkedin_tab")
+    with tab2:
+        st.text_area("LinkedIn Content", outputs.get("LinkedIn", ""), height=400, key="linkedin_tab")
 
-with tab3:
-    st.text_area("Twitter Content", outputs.get("Twitter", ""), height=200, key="twitter_tab")
+    with tab3:
+        st.text_area("Twitter Content", outputs.get("Twitter", ""), height=200, key="twitter_tab")
 
-with tab4:
-    st.text_area("Blog Content", outputs.get("Blog", ""), height=500, key="blog_tab")
+    with tab4:
+        st.text_area("Blog Content", outputs.get("Blog", ""), height=500, key="blog_tab")
+
+      # 📊 Evaluation
+    st.markdown("## 📊 Content Evaluation")
+    evaluation = evaluate_content(outputs.get("Instagram", ""), "Instagram")
+    st.info(evaluation)
+
+    st.divider()
 
 # 📜 HISTORY SECTION (WITH TOGGLE)
 show_history = st.toggle("📜 Show History")
